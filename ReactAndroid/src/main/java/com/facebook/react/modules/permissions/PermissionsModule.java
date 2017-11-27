@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Process;
+import android.util.Log;
 import android.util.SparseArray;
 
 import com.facebook.react.bridge.Callback;
@@ -204,9 +205,14 @@ public class PermissionsModule extends ReactContextBaseJavaModule implements Per
     int requestCode,
     String[] permissions,
     int[] grantResults) {
+    try {
       mCallbacks.get(requestCode).invoke(grantResults, getPermissionAwareActivity());
       mCallbacks.remove(requestCode);
-      return mCallbacks.size() == 0;
+    } catch (NullPointerException e) {
+      Log.e("permissionErr", "NullPointerException");
+    }
+
+    return mCallbacks.size() == 0;
   }
 
   private PermissionAwareActivity getPermissionAwareActivity() {
